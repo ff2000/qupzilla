@@ -45,13 +45,12 @@ BookmarksWidget::BookmarksWidget(QupZilla* mainClass, WebView* view, QWidget* pa
     // it dynamically changes and so, it's not good choice for this widget.
     setLayoutDirection(QApplication::layoutDirection());
 
-    connect(ui->speeddialButton, SIGNAL(linkActivated(const QString &)), this, SLOT(toggleSpeedDial()));
+    connect(ui->speeddialButton, SIGNAL(clicked(QPoint)), this, SLOT(toggleSpeedDial()));
 
     const SpeedDial::Page &page = m_speedDial->pageForUrl(m_url);
-    QString const dialText("<a href='toggle_dial'>%1</a>");
     ui->speeddialButton->setText(page.url.isEmpty() ?
-                                 dialText.arg(tr("Add to Speed Dial")) :
-                                 dialText.arg(tr("Remove from Speed Dial")));
+                                 tr("Add to Speed Dial") :
+                                 tr("Remove from Speed Dial"));
 
     loadBookmark();
 }
