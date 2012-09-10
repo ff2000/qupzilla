@@ -36,6 +36,7 @@ BookmarksWidget::BookmarksWidget(QupZilla* mainClass, WebView* view, QWidget* pa
     , m_view(view)
     , m_bookmarksModel(mApp->bookmarksModel())
     , m_speedDial(mApp->plugins()->speedDial())
+    , m_edited(false)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -44,15 +45,6 @@ BookmarksWidget::BookmarksWidget(QupZilla* mainClass, WebView* view, QWidget* pa
     // it dynamically changes and so, it's not good choice for this widget.
     setLayoutDirection(QApplication::layoutDirection());
 
-    m_bookmarkId = m_bookmarksModel->bookmarkId(m_url);
-
-    if (m_bookmarkId > 0) {
-        connect(ui->saveRemove, SIGNAL(clicked()), this, SLOT(removeBookmark()));
-        ui->saveRemove->setText(tr("Remove"));
-    }
-    else {
-        connect(ui->saveRemove, SIGNAL(clicked()), this, SLOT(saveBookmark()));
-    }
     connect(ui->speeddialButton, SIGNAL(clicked()), this, SLOT(toggleSpeedDial()));
 
     const SpeedDial::Page &page = m_speedDial->pageForUrl(m_url);
@@ -81,13 +73,15 @@ void BookmarksWidget::loadBookmark()
         ui->folder->addItem(style()->standardIcon(QStyle::SP_DirIcon), query.value(0).toString(), query.value(0).toString());
     }
 
+    m_bookmarkId = m_bookmarksModel->bookmarkId(m_url);
+
     if (m_bookmarkId > 0) {
         BookmarksModel::Bookmark bookmark = m_bookmarksModel->getBookmark(m_bookmarkId);
         ui->name->setText(bookmark.title);
         ui->folder->setCurrentIndex(ui->folder->findData(bookmark.folder));
-
-        ui->name->setEnabled(false);
-        ui->folder->setEnabled(false);
+        ui->saveRemove->setText(tr("Remove"));
+        connect(ui->name, SIGNAL(textEdited(QString)), SLOT(bookmarkEdited()));
+        connect(ui->folder, SIGNAL(currentIndexChanged(int)), SLOT(bookmarkEdited()));
     }
     else {
         ui->name->setText(m_view->title());
@@ -100,19 +94,6 @@ void BookmarksWidget::loadBookmark()
 namespace
 {
 const int hideDelay = 270;
-}
-
-void BookmarksWidget::removeBookmark()
-{
-    m_bookmarksModel->removeBookmark(m_url);
-    emit bookmarkDeleted();
-    QTimer::singleShot(hideDelay, this, SLOT(close()));
-}
-
-void BookmarksWidget::saveBookmark()
-{
-    m_bookmarksModel->saveBookmark(m_url, ui->name->text(), m_view->icon(), ui->folder->currentText());
-    QTimer::singleShot(hideDelay, this, SLOT(close()));
 }
 
 void BookmarksWidget::toggleSpeedDial()
@@ -132,6 +113,34 @@ void BookmarksWidget::toggleSpeedDial()
     QTimer::singleShot(hideDelay, this, SLOT(close()));
 }
 
+void BookmarksWidget::bookmarkEdited()
+{
+    if (m_edited) {
+        return;
+    }
+
+    m_edited = true;
+    ui->saveRemove->setText(tr("Save"));
+}
+
+void BookmarksWidget::on_saveRemove_clicked(bool)
+{
+    if (m_bookmarkId > 0) {
+        if (m_edited) {
+            m_bookmarksModel->editBookmark(m_bookmarkId, ui->name->text(), QUrl(), ui->folder->itemData(ui->folder->currentIndex()).toString());
+        }
+        else {
+            m_bookmarksModel->removeBookmark(m_url);
+            emit bookmarkDeleted();
+        }
+    }
+    else {
+        m_bookmarksModel->saveBookmark(m_url, ui->name->text(), m_view->icon(), ui->folder->currentText());
+    }
+    QTimer::singleShot(hideDelay, this, SLOT(close()));
+}
+
+
 void BookmarksWidget::showAt(QWidget* _parent)
 {
     layout()->invalidate();
@@ -142,8 +151,8 @@ void BookmarksWidget::showAt(QWidget* _parent)
 
     show();
 }
-
 BookmarksWidget::~BookmarksWidget()
 {
     delete ui;
 }
+
