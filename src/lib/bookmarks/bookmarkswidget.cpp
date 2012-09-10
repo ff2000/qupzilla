@@ -54,8 +54,8 @@ BookmarksWidget::BookmarksWidget(QupZilla* mainClass, WebView* view, QWidget* pa
     // Use light color for QLabels even with Ubuntu Ambiance theme
     QPalette pal = palette();
     pal.setColor(QPalette::WindowText, QToolTip::palette().color(QPalette::ToolTipText));
-    ui->label_2->setPalette(pal);
-    ui->label_3->setPalette(pal);
+//ui->label_2->setPalette(pal);
+//ui->label_3->setPalette(pal);
 #endif
 
     loadBookmark();
