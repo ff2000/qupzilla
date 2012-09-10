@@ -45,18 +45,13 @@ BookmarksWidget::BookmarksWidget(QupZilla* mainClass, WebView* view, QWidget* pa
     // it dynamically changes and so, it's not good choice for this widget.
     setLayoutDirection(QApplication::layoutDirection());
 
-    connect(ui->speeddialButton, SIGNAL(clicked()), this, SLOT(toggleSpeedDial()));
+    connect(ui->speeddialButton, SIGNAL(linkActivated(const QString &)), this, SLOT(toggleSpeedDial()));
 
     const SpeedDial::Page &page = m_speedDial->pageForUrl(m_url);
-    ui->speeddialButton->setText(page.url.isEmpty() ? tr("Add to Speed Dial") : tr("Remove from Speed Dial"));
-
-#ifndef KDE
-    // Use light color for QLabels even with Ubuntu Ambiance theme
-    QPalette pal = palette();
-    pal.setColor(QPalette::WindowText, QToolTip::palette().color(QPalette::ToolTipText));
-//ui->label_2->setPalette(pal);
-//ui->label_3->setPalette(pal);
-#endif
+    QString const dialText("<a href='toggle_dial'>%1</a>");
+    ui->speeddialButton->setText(page.url.isEmpty() ?
+                                 dialText.arg(tr("Add to Speed Dial")) :
+                                 dialText.arg(tr("Remove from Speed Dial")));
 
     loadBookmark();
 }
@@ -100,15 +95,13 @@ void BookmarksWidget::toggleSpeedDial()
 {
     const SpeedDial::Page &page = m_speedDial->pageForUrl(m_url);
 
+    QString const dialText("<a href='toggle_dial'>%1</a>");
     if (page.url.isEmpty()) {
         m_speedDial->addPage(m_url, m_view->title());
-        ui->speeddialButton->setText(tr("Remove from Speed Dial"));
 
     }
     else {
         m_speedDial->removePage(page);
-        ui->speeddialButton->setText(tr("Add to Speed Dial"));
-
     }
     QTimer::singleShot(hideDelay, this, SLOT(close()));
 }

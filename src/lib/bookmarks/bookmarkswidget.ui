@@ -30,13 +30,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="speeddialButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="QLabel" name="speeddialButton">
        <property name="text">
         <string>Add to Speed Dial</string>
        </property>
