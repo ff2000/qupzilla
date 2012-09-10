@@ -306,10 +306,12 @@ bool PluginsManager::eventFilter(QObject* o, QEvent* e)
     case QEvent::ChildAdded:
         m_settingsOpen = true;
         ui->list->setDisabled(true);
+	ui->allowAppPlugins->setDisabled(true);
         break;
     case QEvent::ChildRemoved:
         m_settingsOpen = false;
         ui->list->setEnabled(true);
+	ui->allowAppPlugins->setEnabled(true);
         break;
     default:
         return QWidget::eventFilter(o, e);
