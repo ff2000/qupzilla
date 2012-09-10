@@ -40,7 +40,7 @@ public:
     void load();
     void save();
 
-    virtual bool eventFilter(QObject *o, QEvent *e);
+    virtual bool eventFilter(QObject* o, QEvent* e);
 
 private slots:
     //App extension

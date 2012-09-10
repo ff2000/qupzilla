@@ -28,7 +28,6 @@
 #include <QMessageBox>
 #include <QTimer>
 #include <QEvent>
-#include <QDebug>
 
 PluginsManager::PluginsManager(QWidget* parent)
     : QWidget(parent)
@@ -71,7 +70,7 @@ PluginsManager::PluginsManager(QWidget* parent)
     }
 
     allowC2FChanged(ui->allowClick2Flash->isChecked());
-    
+
     installEventFilter(this);
 }
 
@@ -274,8 +273,9 @@ void PluginsManager::itemChanged(QListWidgetItem* item)
 
 void PluginsManager::settingsClicked()
 {
-    if(m_settingsOpen)
+    if (m_settingsOpen) {
         return;
+    }
 
     QListWidgetItem* item = ui->list->currentItem();
     if (!item || item->checkState() == Qt::Unchecked) {
@@ -302,19 +302,19 @@ PluginsManager::~PluginsManager()
 
 bool PluginsManager::eventFilter(QObject* o, QEvent* e)
 {
-    switch( e->type() ) {
-        case QEvent::ChildAdded:
-            m_settingsOpen = true;
-            ui->list->setDisabled(true);
-            break;
-        case QEvent::ChildRemoved:
-            m_settingsOpen = false;
-            ui->list->setEnabled(true);
-            break;
-        default:
-            return QWidget::eventFilter(o, e);
+    switch (e->type()) {
+    case QEvent::ChildAdded:
+        m_settingsOpen = true;
+        ui->list->setDisabled(true);
+        break;
+    case QEvent::ChildRemoved:
+        m_settingsOpen = false;
+        ui->list->setEnabled(true);
+        break;
+    default:
+        return QWidget::eventFilter(o, e);
     }
-    
+
     return false;
 }
 
