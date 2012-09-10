@@ -19,11 +19,21 @@
 #include "ui_mousegesturessettingsdialog.h"
 #include "licenseviewer.h"
 
+#include <QLabel>
+
 MouseGesturesSettingsDialog::MouseGesturesSettingsDialog(QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::MouseGesturesSettingsDialog)
 {
     ui->setupUi(this);
+
+    if (QApplication::isRightToLeft()) {
+        ui->label_5->setPixmap(QPixmap(":/mousegestures/data/right.gif"));
+        ui->label_6->setPixmap(QPixmap(":/mousegestures/data/left.gif"));
+        ui->label_18->setPixmap(QPixmap(":/mousegestures/data/up-right.gif"));
+        ui->label_20->setPixmap(QPixmap(":/mousegestures/data/up-left.gif"));
+    }
+
     setAttribute(Qt::WA_DeleteOnClose);
 
     connect(ui->licenseButton, SIGNAL(clicked()), this, SLOT(showLicense()));
