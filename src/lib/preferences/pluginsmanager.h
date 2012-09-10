@@ -40,6 +40,8 @@ public:
     void load();
     void save();
 
+    virtual bool eventFilter(QObject *o, QEvent *e);
+
 private slots:
     //App extension
     void settingsClicked();
@@ -59,6 +61,7 @@ private:
 
     Ui::PluginsList* ui;
     bool m_loaded;
+    bool m_settingsOpen;
 };
 
 #endif // PLUGINSMANAGER_H
