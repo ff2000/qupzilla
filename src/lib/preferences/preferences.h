@@ -20,6 +20,7 @@
 
 #include <QDialog>
 #include <QWeakPointer>
+#include <QWebSettings>
 
 #include "qz_namespace.h"
 
@@ -30,6 +31,7 @@ class Preferences;
 
 class QAbstractButton;
 class QListWidgetItem;
+class QFontComboBox;
 
 class AutoFillManager;
 class QupZilla;
@@ -92,6 +94,7 @@ private slots:
 
 private:
     void closeEvent(QCloseEvent* event);
+    void setFontComboIndex(QFontComboBox* box, const QString& font, QWebSettings::FontFamily family);
 
     Ui::Preferences* ui;
     QupZilla* p_QupZilla;

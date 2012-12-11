@@ -334,12 +334,12 @@ Preferences::Preferences(QupZilla* mainClass, QWidget* parent)
 
     //FONTS
     settings.beginGroup("Browser-Fonts");
-    ui->fontStandard->setCurrentFont(QFont(settings.value("StandardFont", mApp->webSettings()->fontFamily(QWebSettings::StandardFont)).toString()));
-    ui->fontCursive->setCurrentFont(QFont(settings.value("CursiveFont", mApp->webSettings()->fontFamily(QWebSettings::CursiveFont)).toString()));
-    ui->fontFantasy->setCurrentFont(QFont(settings.value("FantasyFont", mApp->webSettings()->fontFamily(QWebSettings::FantasyFont)).toString()));
-    ui->fontFixed->setCurrentFont(QFont(settings.value("FixedFont", mApp->webSettings()->fontFamily(QWebSettings::FixedFont)).toString()));
-    ui->fontSansSerif->setCurrentFont(QFont(settings.value("SansSerifFont", mApp->webSettings()->fontFamily(QWebSettings::SansSerifFont)).toString()));
-    ui->fontSerif->setCurrentFont(QFont(settings.value("SerifFont", mApp->webSettings()->fontFamily(QWebSettings::SerifFont)).toString()));
+    setFontComboIndex(ui->fontStandard, settings.value("StandardFont").toString(), QWebSettings::StandardFont);
+    setFontComboIndex(ui->fontCursive, settings.value("CursiveFont").toString(), QWebSettings::CursiveFont);
+    setFontComboIndex(ui->fontFantasy, settings.value("FantasyFont").toString(), QWebSettings::FantasyFont);
+    setFontComboIndex(ui->fontFixed, settings.value("FixedFont").toString(), QWebSettings::FixedFont);
+    setFontComboIndex(ui->fontSansSerif, settings.value("SansSerifFont").toString(), QWebSettings::SansSerifFont);
+    setFontComboIndex(ui->fontSerif, settings.value("SerifFont").toString(), QWebSettings::SerifFont);
 
     ui->sizeDefault->setValue(settings.value("DefaultFontSize", mApp->webSettings()->fontSize(QWebSettings::DefaultFontSize)).toInt());
     ui->sizeFixed->setValue(settings.value("FixedFontSize", mApp->webSettings()->fontSize(QWebSettings::DefaultFixedFontSize)).toInt());
@@ -1035,5 +1035,16 @@ void Preferences::selectCustomProgressBarColor()
     QColor newColor = QColorDialog::getColor(ui->customColorToolButton->property("ProgressColor").value<QColor>(), this, tr("Select Color"));
     if (newColor.isValid()) {
         setProgressBarColorIcon(newColor);
+    }
+}
+
+void Preferences::setFontComboIndex(QFontComboBox* box, const QString& font, QWebSettings::FontFamily family)
+{
+    int index = box->findText(font); // -1 for empty font, so no need to catch font.isEmpty()
+    if(index >= 0) {
+        box->setCurrentIndex(index);
+    }
+    else {
+        box->setCurrentFont(QFont(mApp->webSettings()->fontFamily(family)));
     }
 }
